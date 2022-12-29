@@ -11,7 +11,7 @@ class Neuron():
         return sum((wi*xi for wi, xi in zip(self.w,x)), self.b).relu()
 
     def parameters(self):
-        return  self.w + [self.b]
+        return  torch.concat((self.b, self.w), 1)
 
 class Layer():
     def __init__(self, nin, nout) -> None:
