@@ -4,17 +4,17 @@ import torch
 class Neuron():
     def __init__(self, nin) -> None:
         super().__init__()
-        self.w = torch.randn(nin, requires_grad=True)
+        self.w = torch.randn(nin, requires_grad=True)               # w = [[x1, x2, x3 .... xn]]    (n,1)
         self.b = torch.randn(1, requires_grad=True)
 
     def __call__(self, x):
-        return torch.add(torch.matmul(x,self.w.unsqueeze(1)), self.b).relu()
+        return torch.add(torch.dot(x,self.w.T), self.b).relu()      # x = [[x1, x2, x3 .... xn]]    (1,n)
 
     def parameters(self):
         return  torch.concat((self.b, self.w), 0).unsqueeze(0)
 
 class Layer():
-    def __init__(self, nin, nout) -> None:
+    def __init__(self, nin, nout):
         super().__init__()
         self.neurons = [Neuron(nin) for _ in range(nout)]
 
@@ -33,7 +33,7 @@ class MLP():
     def __call__(self, x):
         for layer in self.layers:
             x = layer(x)
-        return x / x.sum()
+        return x
 
     def parameters(self):
         return [p for layer in self.layers for p in layer.parameters()]
